@@ -43,10 +43,35 @@ def tel_add(file):
 def tel_find(file):
     what_to_search = input("Введите или фамилию, или имя, или отчество, или номер телефона (можно только часть): ")
     tel_book = tel_read_all(file)
+    how_many_found = 0
     for line in tel_book:
         if what_to_search in line:
             new_line = line.replace("\n", "")
             print(new_line)
+            how_many_found += 1
+    if how_many_found == 0:
+        print("Нет такой строки в справочнике.")
+
+
+def tel_change(file):
+    what_to_search = input("Введите или фамилию, или имя, или отчество, или номер телефона (можно только часть): ")
+    tel_book = tel_read_all(file)
+    indexes_of_found_strings = []
+    for i in range(0, len(tel_book)):
+        if what_to_search in tel_book[i]:
+            print(i, tel_book[i])
+            indexes_of_found_strings.append(i)
+    if len(indexes_of_found_strings) == 0:
+        print("Нет такой строки в справочнике.")
+    elif len(indexes_of_found_strings) == 1:
+        
+        # del tel_book[indexes_of_found_strings[0]]
+
+        # сюда если только одна такая строка что делать
+    # chosen_string_index = int(input("Введите индекс нужной строки: "))
+
+def tel_del(file):
+    pass
 
 
 def main():
@@ -67,7 +92,7 @@ def main():
                     tel_write(file)
                 else:
                     exit()
-        what_to_do = input("Что можно сделать с файлом: записать заново (W), посмотреть (L), дополнить (A), найти запись (F). \n Выход из программы: (E). \n Введите нужную команду: ")
+        what_to_do = input("Что можно сделать с файлом:\n записать заново (W), посмотреть (L), дополнить (A),\n найти запись (F), изменить запись (C), удалить запись (D)\n Выход из программы: (E).\nВведите нужную команду: ")
         if what_to_do.isalpha() == False or len(what_to_do) != 1:
             raise ValueError("Смотрите сокращения команд в начальной строке!")
         what_to_do = what_to_do.upper()
@@ -75,7 +100,7 @@ def main():
             want_a_rewrite = input("Уверены, что хотите заново заполнить файл? (Y/N): ")
             if want_a_rewrite.isalpha() == False or len(want_a_rewrite) != 1:
                 raise ValueError("Введите Y или N")
-            if want_a_rewrite == "Y":
+            if want_a_rewrite.upper() == "Y":
                 tel_write(file)
             else:
                 exit()
@@ -85,6 +110,16 @@ def main():
             tel_add(file)
         elif what_to_do == "F":
             tel_find(file)
+        elif what_to_do == "C":
+            want_a_change = input("Уверены, что хотите изменить запись? (Y/N): ")
+            if want_a_change.isalpha() == False or len(want_a_change) != 1:
+                raise ValueError("Введите Y или N")
+            if want_a_change.upper() == "Y":
+                tel_change(file)
+            else:
+                exit()
+        elif what_to_do == "D":
+            tel_del(file)
         else:
             exit()
 
