@@ -54,7 +54,7 @@ def tel_find(file):
 
 
 def tel_change(file):
-    what_to_search = input("Введите или фамилию, или имя, или отчество, или номер телефона (можно только часть): ")
+    what_to_search = input("Введите (можно только частично) или фамилию, или имя, или отчество, или номер телефона: ")
     tel_book = tel_read_all(file)
     indexes_of_found_strings = []
     for i in range(0, len(tel_book)):
@@ -63,12 +63,29 @@ def tel_change(file):
             indexes_of_found_strings.append(i)
     if len(indexes_of_found_strings) == 0:
         print("Нет такой строки в справочнике.")
-    elif len(indexes_of_found_strings) == 1:
-        
-        # del tel_book[indexes_of_found_strings[0]]
+    else:
+        index_of_changing_string = indexes_of_found_strings[0]
+        if len(indexes_of_found_strings) > 1:
+            chosen_index = int(input("Введите индекс той из найденных записей, которую хотите изменить: "))
+            if chosen_index in set(indexes_of_found_strings):
+                index_of_changing_string = chosen_index
+            else:
+                raise ValueError("Введенный индекс не соотвествует найденным строкам.")
+        what_to_change = input("Введите (целиком) тот элемент записи, который хотите изменить: ")
+        to_what_we_change = input("Введите элемент на замену: ")
+        how_many_found = 0
+        changed_string = tel_book[index_of_changing_string].split()
+        for j in range(0, len(changed_string)):
+            if what_to_change == changed_string[j]:
+                changed_string[j] = to_what_we_change
+                how_many_found += 1
+        if how_many_found == 0 or how_many_found > 1:
+            raise ValueError("Введите правильно заменяемый элемент.")
+        tel_book[index_of_changing_string] = changed_string
+        with open(file, "w", encoding = "utf-8") as fd:
+            for address in range(0, len(tel_book)):
+                fd.write(f"{address};\n")
 
-        # сюда если только одна такая строка что делать
-    # chosen_string_index = int(input("Введите индекс нужной строки: "))
 
 def tel_del(file):
     pass
