@@ -6,6 +6,8 @@
 # 1. Отдельные функции для записи файла и дозаписи в файл: чтобы была возможность перезаписать, по желанию, файл полностью.
 # 2. Есть проверка введенных пользователем команд на правильность: если команды введены неверно, программа напишет об этом и прервется.
 # 3. В начале есть проверка наличия файла и выбор, как поступить, при отсутствии файла.
+# 4. За изменение и удаление отвечает одна и та же функция.
+# 5. Изменить можно, на выбор, или строку целиком, или одну из ее частей.
 
 import os.path
 
@@ -53,7 +55,7 @@ def tel_find(file):
         print("Нет такой строки в справочнике.")
 
 
-def tel_change(file):
+def tel_change(file, what_to_do):
     what_to_search = input("Введите (можно только частично) или фамилию, или имя, или отчество, или номер телефона: ")
     tel_book = tel_read_all(file)
     indexes_of_found_strings = []
@@ -66,29 +68,43 @@ def tel_change(file):
     else:
         index_of_changing_string = indexes_of_found_strings[0]
         if len(indexes_of_found_strings) > 1:
-            chosen_index = int(input("Введите индекс той из найденных записей, которую хотите изменить: "))
+            chosen_index = int(input("Введите индекс нужной из найденных записей: "))
             if chosen_index in set(indexes_of_found_strings):
                 index_of_changing_string = chosen_index
             else:
-                raise ValueError("Введенный индекс не соотвествует найденным строкам.")
-        what_to_change = input("Введите (целиком) тот элемент записи, который хотите изменить: ")
-        to_what_we_change = input("Введите элемент на замену: ")
-        how_many_found = 0
-        changed_string = tel_book[index_of_changing_string].split()
-        for j in range(0, len(changed_string)):
-            if what_to_change == changed_string[j]:
-                changed_string[j] = to_what_we_change
-                how_many_found += 1
-        if how_many_found == 0 or how_many_found > 1:
-            raise ValueError("Введите правильно заменяемый элемент.")
-        tel_book[index_of_changing_string] = changed_string
-        with open(file, "w", encoding = "utf-8") as fd:
-            for address in range(0, len(tel_book)):
-                fd.write(f"{address};\n")
-
-
-def tel_del(file):
-    pass
+                raise ValueError("Введенный индекс не соответствует найденным строкам.")
+        if what_to_do == "C":
+            whole_or_part = input("Заменить строку целиком? (Y/N): ")
+            if whole_or_part.isalpha() == False or len(whole_or_part) != 1:
+                raise ValueError("Введите Y или N")
+            if whole_or_part.upper() == "Y":
+                del tel_book[index_of_changing_string]
+                with open(file, "w", encoding = "utf-8") as fd:
+                    for address in range(0, len(tel_book)):
+                        fd.write(f"{address};\n")
+                with open(file, "a", encoding = "utf-8") as fd:
+                    new_address = input("Введите через пробелы фамилию, имя, отчество, номер телефона:")
+                    fd.write(f"{new_address};\n")
+            else:
+                what_to_change = input("Введите (целиком) тот элемент записи, который хотите изменить: ")
+                to_what_we_change = input("Введите элемент на замену: ")
+                how_many_found = 0
+                changed_string = tel_book[index_of_changing_string].split()
+                for j in range(0, len(changed_string)):
+                    if what_to_change == changed_string[j]:
+                        changed_string[j] = to_what_we_change
+                        how_many_found += 1
+                if how_many_found == 0 or how_many_found > 1:
+                    raise ValueError("Введите правильно заменяемый элемент.")
+                tel_book[index_of_changing_string] = changed_string
+                with open(file, "w", encoding = "utf-8") as fd:
+                    for address in range(0, len(tel_book)):
+                        fd.write(f"{address};\n")
+        else:
+            del tel_book[index_of_changing_string]
+            with open(file, "w", encoding = "utf-8") as fd:
+                for address in range(0, len(tel_book)):
+                    fd.write(f"{address};\n")
 
 
 def main():
@@ -132,13 +148,20 @@ def main():
             if want_a_change.isalpha() == False or len(want_a_change) != 1:
                 raise ValueError("Введите Y или N")
             if want_a_change.upper() == "Y":
-                tel_change(file)
+                tel_change(file, what_to_do)
             else:
                 exit()
         elif what_to_do == "D":
-            tel_del(file)
+            want_to_del = input("Уверены, что хотите удалить запись? (Y/N): ")
+            if want_to_del.isalpha() == False or len(want_to_del) != 1:
+                raise ValueError("Введите Y или N")
+            if want_to_del.upper() == "Y":
+                tel_change(file, what_to_do)
+            else:
+                exit()
         else:
             exit()
+
 
 
 if __name__ == "__main__":
