@@ -17,7 +17,7 @@ def tel_write(file):
     with open(file, "w", encoding = "utf-8") as fd:
         for i in range(0, how_many_addresses):
             string = input("Введите через пробелы фамилию, имя, отчество, номер телефона:")
-            fd.write(f"{string};\n")
+            fd.write(f"{string}\n")
 
 
 def tel_read_all(file):
@@ -39,7 +39,7 @@ def tel_add(file):
     with open(file, "a", encoding = "utf-8") as fd:
         for i in range(0, how_many_addresses):
             string = input("Введите через пробелы фамилию, имя, отчество, номер телефона:")
-            fd.write(f"{string};\n")
+            fd.write(f"{string}\n")
 
 
 def tel_find(file):
@@ -80,11 +80,11 @@ def tel_change(file, what_to_do):
             if whole_or_part.upper() == "Y":
                 del tel_book[index_of_changing_string]
                 with open(file, "w", encoding = "utf-8") as fd:
-                    for address in range(0, len(tel_book)):
-                        fd.write(f"{address};\n")
+                    for address in tel_book:
+                        fd.write(f"{address}\n")
                 with open(file, "a", encoding = "utf-8") as fd:
                     new_address = input("Введите через пробелы фамилию, имя, отчество, номер телефона:")
-                    fd.write(f"{new_address};\n")
+                    fd.write(f"{new_address}\n")
             else:
                 what_to_change = input("Введите (целиком) тот элемент записи, который хотите изменить: ")
                 to_what_we_change = input("Введите элемент на замену: ")
@@ -98,13 +98,15 @@ def tel_change(file, what_to_do):
                     raise ValueError("Введите правильно заменяемый элемент.")
                 tel_book[index_of_changing_string] = changed_string
                 with open(file, "w", encoding = "utf-8") as fd:
-                    for address in range(0, len(tel_book)):
-                        fd.write(f"{address};\n")
+                    for address in tel_book:
+                        surn, name, patr, number = address
+                        fd.write(f"{surn} {name} {patr} {number}\n")
         else:
+            print(tel_book)
             del tel_book[index_of_changing_string]
+            print(tel_book)
             with open(file, "w", encoding = "utf-8") as fd:
-                for address in range(0, len(tel_book)):
-                    fd.write(f"{address};\n")
+                fd.writelines(tel_book)
 
 
 def main():
